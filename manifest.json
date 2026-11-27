@@ -1,0 +1,11 @@
+{
+  "name": "논산 생산입력",
+  "short_name": "생산입력",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f6f6",
+  "theme_color": "#404D4D",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}

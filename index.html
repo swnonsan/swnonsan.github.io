@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content">
+<meta name="theme-color" content="#404D4D">
+<title>논산 생산입력</title>
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<style>
+  html, body { margin: 0; height: 100%; background: #f3f6f6; }
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>
+</head>
+<body>
+<!--
+  신우에프에스 논산 생산입력 — 입구 페이지
+  실제 입력기는 구글 Apps Script 웹앱이고, 이 페이지는 그것을 화면 가득 띄우기만 한다.
+  · 주소가 구글이 아니라서 휴대폰 드라이브 앱이 링크를 가로채지 않고, 위쪽 Apps Script 안내 줄도 보이지 않는다
+  · 로그인 유지: 입력기가 로그인/로그아웃을 알려 주면 이 페이지 저장공간에 비밀번호를 기억했다가 다음에 넘겨준다
+  · 입력기 기능을 고쳐도 이 파일은 그대로 둔다. Apps Script 에서 "새 배포"로 /exec 주소가 바뀔 때만 EXEC 한 줄을 고친다
+-->
+<iframe id="app" title="논산 생산입력" allow="clipboard-write"></iframe>
+<script>
+  const EXEC = 'https://script.google.com/macros/s/AKfycbyvLd0Tbxuoc_91hhkvSo8HfMTT3dt90DUah7PjNb46KkJrDYVlMSfnLnv4F96DAAqYYg/exec';
+  const KEY = 'nonsan_pw';
+
+  let pw = '';
+  try { pw = localStorage.getItem(KEY) || ''; } catch (e) {}
+  const q = new URLSearchParams(location.search).get('k');   // ?k=비밀번호 로 열면 그 값을 먼저 쓴다
+  if (q) pw = q;
+  document.getElementById('app').src = EXEC + (pw ? '?k=' + encodeURIComponent(pw) : '');
+
+  // 입력기(구글 화면)에서 오는 알림만 받는다
+  addEventListener('message', e => {
+    let host = '';
+    try { host = new URL(e.origin).hostname; } catch (err) { return; }
+    if (!/\.googleusercontent\.com$/.test(host)) return;
+    const d = e.data || {};
+    try {
+      if (d.type === 'nonsan-login' && d.pw) localStorage.setItem(KEY, d.pw);
+      if (d.type === 'nonsan-logout') localStorage.removeItem(KEY);
+    } catch (err) {}
+  });
+</script>
+</body>
+</html>
