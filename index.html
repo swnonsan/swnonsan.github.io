@@ -81,15 +81,17 @@
   })();
 
   const EXEC ='https://script.google.com/macros/s/AKfycbyvLd0Tbxuoc_91hhkvSo8HfMTT3dt90DUah7PjNb46KkJrDYVlMSfnLnv4F96DAAqYYg/exec';
-  const KEY = 'nonsan_pw';
+  const KEY = 'nonsan_pw', KEY_USER = 'nonsan_user';   // 로그인 비밀번호, 입력자 이름
 
   let pw = '';
   try { pw = localStorage.getItem(KEY) || ''; } catch (e) {}
   const q = new URLSearchParams(location.search).get('k');   // ?k=비밀번호 로 열면 그 값을 먼저 쓴다
   if (q) pw = q;
   const app = document.getElementById('app');
-  // entry=1: 입력기에 "입구 페이지 안에서 열렸다"고 알려 준다 (로그인 기억을 이 페이지에 맡기게)
-  if (!window.STOP) app.src = EXEC + '?entry=1' + (pw ? '&k=' + encodeURIComponent(pw) : '');
+  let user = '';
+  try { user = localStorage.getItem(KEY_USER) || ''; } catch (e) {}
+  // entry=1: 입력기에 "입구 페이지 안에서 열렸다"고 알려 준다 (로그인·입력자 이름 기억을 이 페이지에 맡기게)
+  if (!window.STOP) app.src = EXEC + '?entry=1' + (pw ? '&k=' + encodeURIComponent(pw) : '') + (user ? '&u=' + encodeURIComponent(user) : '');
 
   // 이 페이지에 띄운 입력기(구글 화면은 2~3겹이라 그 안쪽 어딘가)에서 온 알림만 받는다.
   // 구글 화면은 보안상 보낸 곳 주소가 'null'로 올 수 있어, 주소 대신 '내 iframe 안의 창인지'로 확인한다
@@ -103,6 +105,7 @@
     try {
       if (d.type === 'nonsan-login' && d.pw) localStorage.setItem(KEY, d.pw);
       if (d.type === 'nonsan-logout') localStorage.removeItem(KEY);
+      if (d.type === 'nonsan-user' && d.user) localStorage.setItem(KEY_USER, String(d.user).slice(0, 30));
     } catch (err) {}
   });
 </script>
