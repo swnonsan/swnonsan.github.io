@@ -30,13 +30,18 @@
   try { pw = localStorage.getItem(KEY) || ''; } catch (e) {}
   const q = new URLSearchParams(location.search).get('k');   // ?k=비밀번호 로 열면 그 값을 먼저 쓴다
   if (q) pw = q;
-  document.getElementById('app').src = EXEC + (pw ? '?k=' + encodeURIComponent(pw) : '');
+  const app = document.getElementById('app');
+  // entry=1: 입력기에 "입구 페이지 안에서 열렸다"고 알려 준다 (로그인 기억을 이 페이지에 맡기게)
+  app.src = EXEC + '?entry=1' + (pw ? '&k=' + encodeURIComponent(pw) : '');
 
-  // 입력기(구글 화면)에서 오는 알림만 받는다
+  // 이 페이지에 띄운 입력기(구글 화면은 2~3겹이라 그 안쪽 어딘가)에서 온 알림만 받는다.
+  // 구글 화면은 보안상 보낸 곳 주소가 'null'로 올 수 있어, 주소 대신 '내 iframe 안의 창인지'로 확인한다
+  const fromApp = src => {
+    try { for (let w = src, i = 0; w && i < 5; w = w.parent, i++) { if (w === app.contentWindow) return true; if (w === w.parent) break; } } catch (err) {}
+    return false;
+  };
   addEventListener('message', e => {
-    let host = '';
-    try { host = new URL(e.origin).hostname; } catch (err) { return; }
-    if (!/\.googleusercontent\.com$/.test(host)) return;
+    if (!fromApp(e.source)) return;
     const d = e.data || {};
     try {
       if (d.type === 'nonsan-login' && d.pw) localStorage.setItem(KEY, d.pw);
