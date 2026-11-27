@@ -58,6 +58,13 @@
     } else if (/ Line\//i.test(ua)) {
       location.href = here + (here.includes('?') ? '&' : '?') + 'openExternalBrowser=1';
       window.STOP = true;
+    } else if (isAndroid && /SamsungBrowser/i.test(ua)) {
+      // 삼성인터넷: 페이지 안에서 불러오는 구글 주소도 드라이브 앱으로 넘기므로 크롬으로 연다
+      const intent = 'intent://' + location.host + location.pathname + location.search +
+        '#Intent;scheme=https;package=com.android.chrome;end';
+      show('삼성인터넷에서는 입력기가 구글 드라이브로 넘어가서 크롬으로 엽니다.<br>열리지 않으면 아래 버튼을 누르세요.<br><small>(크롬에서 "홈 화면에 추가"해 두면 다음부터 바로 열립니다)</small>', intent, '크롬으로 열기');
+      location.href = intent;
+      window.STOP = true;
     } else if (/NAVER\(inapp|BAND\/|Instagram|FBAN|FBAV|DaumApps|everytimeApp/i.test(ua)) {
       if (isAndroid) {
         const intent = 'intent://' + location.host + location.pathname + location.search +
