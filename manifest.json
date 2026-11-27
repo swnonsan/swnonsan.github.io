@@ -1,11 +1,15 @@
 {
+  "id": "/",
   "name": "논산 생산입력",
   "short_name": "생산입력",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f3f6f6",
+  "background_color": "#ffffff",
   "theme_color": "#404D4D",
   "icons": [
-    { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
